@@ -1,0 +1,21 @@
+{
+  "domain": "transip_dns",
+  "name": "TransIP Dynamic DNS",
+  "codeowners": [
+    "@joohann"
+  ],
+  "config_flow": true,
+  "dependencies": [
+    "frontend",
+    "http",
+    "websocket_api"
+  ],
+  "documentation": "https://github.com/joohann/transip-DNS",
+  "integration_type": "service",
+  "iot_class": "cloud_polling",
+  "issue_tracker": "https://github.com/joohann/transip-DNS/issues",
+  "requirements": [
+    "cryptography>=41.0.0"
+  ],
+  "version": "0.2.0"
+}

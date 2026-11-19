@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>TransIP DNS panel on a MacBook</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: #112111;
+    font-family: Roboto, system-ui, sans-serif; }
+  .frame { height: 100%; display: flex; flex-direction: column; }
+  .area { flex: 1; position: relative; overflow: hidden; }
+  /* Slide indicator: the active step is a stretched pill, the rest are dots. */
+  .steps { flex: none; display: flex; flex-direction: column; align-items: center;
+    gap: 10px; padding: 4px 0 22px; }
+  .dots { display: flex; align-items: center; gap: 7px; }
+  .dots i { width: 7px; height: 7px; border-radius: 999px; background: rgba(255,255,255,.26); }
+  .dots i.on { width: 26px; background: rgba(255,255,255,.85); }
+  .caption { font-size: 15px; color: rgba(255,255,255,.72); letter-spacing: .01em; }
+  .caption b { color: rgba(255,255,255,.95); font-weight: 500; }
+  .stage { position: absolute; top: 0; left: 0; width: 2000px; height: 1388px;
+    transform-origin: 0 0; }
+  .stage img { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  /* The panel is mapped onto the green quad with a homography, so it follows
+     the photo's perspective instead of sitting flat on top of it. */
+  .screen { position: absolute; top: 0; left: 0; width: 1280px; height: 800px;
+    transform-origin: 0 0; overflow: hidden; background: #0e1316; border-radius: 6px; }
+  .screen iframe { width: 1280px; height: 800px; border: 0; display: block; }
+  #debug { position: fixed; left: 8px; bottom: 8px; font: 12px ui-monospace, monospace;
+    color: #9fe1cb; background: #000a; padding: 6px 10px; border-radius: 6px; display: none; }
+  body.debug #debug { display: block; }
+</style>
+</head>
+<body>
+<div class="frame">
+  <div class="area" id="area">
+    <div class="stage" id="stage">
+      <img id="photo" src="assets/macbook.webp" alt="" />
+      <div class="screen" id="screen"><iframe id="frame" src="about:blank"></iframe></div>
+    </div>
+  </div>
+  <div class="steps" id="steps" hidden>
+    <div class="dots" id="dots"></div>
+    <div class="caption" id="caption"></div>
+  </div>
+</div>
+<div id="debug">detecting…</div>
+
+<script>
+const params = new URLSearchParams(location.search);
+const view = params.get("view") || "";
+const dark = params.get("dark") ? "&dark=1" : "";
+document.getElementById("frame").src =
+  `panel-harness.html?chrome=1&lang=en&ipv6=1&clean=1${dark}${view ? "&view=" + view : ""}`;
+
+// Solve the 8 unknowns of a 2D homography mapping the unit rectangle
+// (0,0)-(w,0)-(w,h)-(0,h) onto four destination points.
+function solve(matrix, vector) {
+  const n = vector.length;
+  for (let i = 0; i < n; i++) {
+    let pivot = i;
+    for (let r = i + 1; r < n; r++) {
+      if (Math.abs(matrix[r][i]) > Math.abs(matrix[pivot][i])) pivot = r;
+    }
+    [matrix[i], matrix[pivot]] = [matrix[pivot], matrix[i]];
+    [vector[i], vector[pivot]] = [vector[pivot], vector[i]];
+    for (let r = i + 1; r < n; r++) {
+      const factor = matrix[r][i] / matrix[i][i];
+      for (let c = i; c < n; c++) matrix[r][c] -= factor * matrix[i][c];
+      vector[r] -= factor * vector[i];
+    }
+  }
+  const result = new Array(n).fill(0);
+  for (let i = n - 1; i >= 0; i--) {
+    let sum = vector[i];
+    for (let c = i + 1; c < n; c++) sum -= matrix[i][c] * result[c];
+    result[i] = sum / matrix[i][i];
+  }
+  return result;
+}
+
+function homography(w, h, corners) {
+  const src = [[0, 0], [w, 0], [w, h], [0, h]];
+  const rows = [], rhs = [];
+  for (let i = 0; i < 4; i++) {
+    const [x, y] = src[i];
+    const [u, v] = corners[i];
+    rows.push([x, y, 1, 0, 0, 0, -u * x, -u * y]); rhs.push(u);
+    rows.push([0, 0, 0, x, y, 1, -v * x, -v * y]); rhs.push(v);
+  }
+  const s = solve(rows, rhs);
+  // CSS matrix3d is column-major and skips the z row/column.
+  return [s[0], s[3], 0, s[6], s[1], s[4], 0, s[7], 0, 0, 1, 0, s[2], s[5], 0, 1];
+}
+
+function findGreenQuad(image) {
+  const canvas = document.createElement("canvas");
+  canvas.width = image.naturalWidth;
+  canvas.height = image.naturalHeight;
+  const context = canvas.getContext("2d", { willReadFrequently: true });
+  context.drawImage(image, 0, 0);
+  const { data } = context.getImageData(0, 0, canvas.width, canvas.height);
+
+  let tl = null, tr = null, bl = null, br = null;
+  let best = { tl: Infinity, br: -Infinity, tr: -Infinity, bl: Infinity };
+  let count = 0;
+  for (let y = 0; y < canvas.height; y++) {
+    for (let x = 0; x < canvas.width; x++) {
+      const i = (y * canvas.width + x) * 4;
+      const r = data[i], g = data[i + 1], b = data[i + 2];
+      // Chroma green: a dominant, bright green channel.
+      if (!(g > 170 && g > r * 1.35 && g > b * 2.2)) continue;
+      count++;
+      const sum = x + y, diff = x - y;
+      if (sum < best.tl) { best.tl = sum; tl = [x, y]; }
+      if (sum > best.br) { best.br = sum; br = [x, y]; }
+      if (diff > best.tr) { best.tr = diff; tr = [x, y]; }
+      if (diff < best.bl) { best.bl = diff; bl = [x, y]; }
+    }
+  }
+  return { corners: [tl, tr, br, bl], count };
+}
+
+// Push the quad a hair outwards so the display's rounded corners do not leave
+// a rim of chroma green around the content.
+function inflate(corners, amount) {
+  const cx = corners.reduce((sum, c) => sum + c[0], 0) / 4;
+  const cy = corners.reduce((sum, c) => sum + c[1], 0) / 4;
+  return corners.map(([x, y]) => {
+    const dx = x - cx, dy = y - cy;
+    const length = Math.hypot(dx, dy) || 1;
+    return [x + (dx / length) * amount, y + (dy / length) * amount];
+  });
+}
+
+function fitStage() {
+  const stage = document.getElementById("stage");
+  const area = document.getElementById("area");
+  const scale = Math.min(area.clientWidth / 2000, area.clientHeight / 1388);
+  const x = (area.clientWidth - 2000 * scale) / 2;
+  const y = (area.clientHeight - 1388 * scale) / 2;
+  stage.style.transform = `translate(${x}px, ${y}px) scale(${scale})`;
+}
+
+// ?step=2&steps=3&label=Settings draws the indicator under the laptop.
+function drawSteps() {
+  const step = Number(params.get("step") || 0);
+  const total = Number(params.get("steps") || 0);
+  if (!step || !total) return;
+  const label = params.get("label") || "";
+  document.getElementById("steps").hidden = false;
+  document.getElementById("dots").innerHTML = Array.from(
+    { length: total },
+    (_, i) => `<i class="${i === step - 1 ? "on" : ""}"></i>`
+  ).join("");
+  document.getElementById("caption").innerHTML =
+    `${step} / ${total}${label ? ` &middot; <b>${label.replace(/[<>&]/g, "")}</b>` : ""}`;
+}
+
+if (params.get("debug")) document.body.classList.add("debug");
+
+const photo = document.getElementById("photo");
+const place = () => {
+  const { corners, count } = findGreenQuad(photo);
+  if (count < 1000) {
+    document.getElementById("debug").textContent = "no green area found";
+    return;
+  }
+  const screen = document.getElementById("screen");
+  const quad = inflate(corners, 7);
+  screen.style.transform = `matrix3d(${homography(1280, 800, quad).join(",")})`;
+  fitStage();
+  document.getElementById("debug").textContent =
+    `green px ${count} · corners ${corners.map((c) => c.join(",")).join(" | ")}`;
+  window.__corners = corners;
+};
+drawSteps();
+if (photo.complete) place(); else photo.addEventListener("load", place);
+window.addEventListener("resize", fitStage);
+</script>
+</body>
+</html>

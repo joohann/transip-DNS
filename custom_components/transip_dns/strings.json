@@ -1,0 +1,83 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "TransIP account",
+        "description": "Enter your TransIP login and the private key of a Key Pair (created in the TransIP control panel under My account > API). The Key Pair must NOT be restricted to a whitelisted IP, since the whole point of this integration is that your IP changes.\n\nPaste the COMPLETE private key, including the first line `-----BEGIN PRIVATE KEY-----` (or `-----BEGIN RSA PRIVATE KEY-----`) and the last line `-----END PRIVATE KEY-----`. Pasting only the middle section will fail.",
+        "data": {
+          "login": "TransIP login",
+          "private_key": "Private key (PEM)"
+        }
+      },
+      "record": {
+        "title": "DNS record",
+        "description": "Add a DNS record to keep in sync with your external IP. The record must already exist in the zone (create it once in the TransIP control panel); this integration only updates its content.",
+        "data": {
+          "domain": "Domain (e.g. example.nl)",
+          "name": "Subdomain / record name (e.g. @, www, home)",
+          "record_type": "Record type",
+          "add_another": "Add another record"
+        }
+      }
+    },
+    "error": {
+      "auth_failed": "Could not authenticate with TransIP: {error_detail}",
+      "unknown": "Unexpected error: {error_detail}"
+    },
+    "abort": {
+      "already_configured": "This TransIP account is already configured."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "TransIP DNS options",
+        "menu_options": {
+          "add_record": "Add a DNS record",
+          "remove_record": "Remove DNS records",
+          "interval": "Change check interval",
+          "notifications": "Notification settings",
+          "panel": "Panel"
+        }
+      },
+      "add_record": {
+        "title": "Add DNS record",
+        "data": {
+          "domain": "Domain (e.g. example.nl)",
+          "name": "Subdomain / record name (e.g. @, www, home)",
+          "record_type": "Record type",
+          "add_another": "Add another record"
+        }
+      },
+      "remove_record": {
+        "title": "Remove DNS records",
+        "data": {
+          "records": "Records to remove"
+        }
+      },
+      "interval": {
+        "title": "Check interval",
+        "data": {
+          "update_interval": "Minutes between checks"
+        }
+      },
+      "notifications": {
+        "title": "Notification settings",
+        "description": "Choose how you want to be notified when a DNS record is updated.",
+        "data": {
+          "notify_persistent": "Show a persistent notification in Home Assistant",
+          "notify_event": "Fire a 'transip_dns_updated' event (for your own automations, e.g. a mobile push notification)",
+          "notify_targets": "Send directly to these notify targets (e.g. mobile_app_your_phone) - select one or more, or type a name that isn't listed yet"
+        }
+      },
+      "panel": {
+        "title": "Panel",
+        "description": "With the panel on, the gear button on the integration page opens a full page instead of this dialog, and every setting moves there. Switch it off from the panel, or with the transip_dns.set_panel_enabled service.",
+        "data": {
+          "panel_enabled": "Use the panel instead of this dialog",
+          "panel_sidebar": "Also show the panel in the sidebar"
+        }
+      }
+    }
+  }
+}

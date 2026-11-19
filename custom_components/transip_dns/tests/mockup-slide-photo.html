@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>TransIP DNS panel — views</title>
+<style>
+  :root { --shot-w: 2000px; --shot-h: 1388px; --shot-scale: .30; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: #05080a; }
+  .slide { width: 1920px; height: 1080px; position: relative; overflow: hidden;
+    font-family: Roboto, system-ui, sans-serif; color: #fff;
+    background: radial-gradient(120% 90% at 20% 0%, #102414 0%, #081109 55%, #050a06 100%); }
+  .glow { position: absolute; border-radius: 50%; filter: blur(130px); }
+  .glow.a { width: 1100px; height: 1100px; left: -280px; top: -360px; background: #4ade80; opacity: .16; }
+  .glow.b { width: 860px; height: 860px; right: -220px; top: -200px; background: #22d3ee; opacity: .12; }
+  .glow.c { width: 820px; height: 820px; left: 600px; bottom: -420px; background: #84cc16; opacity: .10; }
+  .head { position: relative; padding: 64px 76px 0; }
+  .head h1 { font-size: 46px; font-weight: 500; margin: 0; letter-spacing: -.015em; }
+  .head p { font-size: 20px; margin: 12px 0 0; color: rgba(255,255,255,.60); }
+  .row { position: relative; display: flex; gap: 30px; justify-content: center;
+    align-items: flex-start; padding: 150px 30px 0; }
+  .item { display: flex; flex-direction: column; align-items: center; }
+  .shot { width: calc(var(--shot-w) * var(--shot-scale));
+    height: calc(var(--shot-h) * var(--shot-scale));
+    overflow: hidden; border-radius: 18px; box-shadow: 0 30px 60px rgba(0,0,0,.55);
+    border: 1px solid rgba(255,255,255,.10); }
+  .shot iframe { width: var(--shot-w); height: var(--shot-h); border: 0;
+    transform: scale(var(--shot-scale)); transform-origin: 0 0; }
+  .cap { margin-top: 26px; text-align: center; }
+  .cap b { display: block; font-size: 21px; font-weight: 500; }
+  .cap span { display: block; font-size: 16px; color: rgba(255,255,255,.56); margin-top: 6px; }
+  .foot { position: absolute; left: 76px; bottom: 42px; font-size: 15px; color: rgba(255,255,255,.38); }
+</style>
+</head>
+<body>
+<div class="slide">
+  <div class="glow a"></div><div class="glow b"></div><div class="glow c"></div>
+
+  <div class="head">
+    <h1>TransIP DNS panel</h1>
+    <p>Liquid glass, three views of the same page</p>
+  </div>
+
+  <div class="row">
+    <div class="item">
+      <div class="shot"><iframe src="mockup-macbook.html?dark=1"></iframe></div>
+      <div class="cap"><b>Overview</b><span>Both address families, records, history</span></div>
+    </div>
+    <div class="item">
+      <div class="shot"><iframe src="mockup-macbook.html?view=settings"></iframe></div>
+      <div class="cap"><b>Settings</b><span>Every setting in one glass dialog</span></div>
+    </div>
+    <div class="item">
+      <div class="shot"><iframe src="mockup-macbook.html?dark=1&view=combo"></iframe></div>
+      <div class="cap"><b>Notify targets</b><span>Combobox with search and custom names</span></div>
+    </div>
+  </div>
+
+  <div class="foot">Home Assistant custom integration &middot; transip_dns</div>
+</div>
+</body>
+</html>

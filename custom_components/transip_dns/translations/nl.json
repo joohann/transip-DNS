@@ -1,0 +1,83 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "TransIP account",
+        "description": "Vul je TransIP login in en de private key van een Key Pair (aan te maken in het TransIP controlepaneel onder Mijn account > API). Zet 'whitelisted IP' voor deze Key Pair UIT, want het hele punt van deze integratie is dat je IP verandert.\n\nPlak de VOLLEDIGE private key, inclusief de eerste regel `-----BEGIN PRIVATE KEY-----` (of `-----BEGIN RSA PRIVATE KEY-----`) en de laatste regel `-----END PRIVATE KEY-----`. Alleen het middenstuk plakken werkt niet.",
+        "data": {
+          "login": "TransIP login",
+          "private_key": "Private key (PEM)"
+        }
+      },
+      "record": {
+        "title": "DNS-record",
+        "description": "Voeg een DNS-record toe dat gesynchroniseerd moet blijven met je externe IP. Het record moet al bestaan in de zone (eenmalig aanmaken in het TransIP controlepaneel); deze integratie werkt alleen de inhoud bij.",
+        "data": {
+          "domain": "Domein (bijv. example.nl)",
+          "name": "Subdomein / recordnaam (bijv. @, www, home)",
+          "record_type": "Recordtype",
+          "add_another": "Nog een record toevoegen"
+        }
+      }
+    },
+    "error": {
+      "auth_failed": "Kon niet authenticeren bij TransIP: {error_detail}",
+      "unknown": "Onverwachte fout: {error_detail}"
+    },
+    "abort": {
+      "already_configured": "Dit TransIP account is al geconfigureerd."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "TransIP DNS opties",
+        "menu_options": {
+          "add_record": "DNS-record toevoegen",
+          "remove_record": "DNS-records verwijderen",
+          "interval": "Controle-interval wijzigen",
+          "notifications": "Notificatie-instellingen",
+          "panel": "Paneel"
+        }
+      },
+      "add_record": {
+        "title": "DNS-record toevoegen",
+        "data": {
+          "domain": "Domein (bijv. example.nl)",
+          "name": "Subdomein / recordnaam (bijv. @, www, home)",
+          "record_type": "Recordtype",
+          "add_another": "Nog een record toevoegen"
+        }
+      },
+      "remove_record": {
+        "title": "DNS-records verwijderen",
+        "data": {
+          "records": "Te verwijderen records"
+        }
+      },
+      "interval": {
+        "title": "Controle-interval",
+        "data": {
+          "update_interval": "Minuten tussen controles"
+        }
+      },
+      "notifications": {
+        "title": "Notificatie-instellingen",
+        "description": "Kies hoe je op de hoogte gehouden wilt worden als een DNS-record wordt bijgewerkt.",
+        "data": {
+          "notify_persistent": "Toon een persistent notification in Home Assistant",
+          "notify_event": "Vuur een 'transip_dns_updated' event af (voor je eigen automations, bijv. een pushmelding naar je telefoon)",
+          "notify_targets": "Stuur direct naar deze notify-doelen (bijv. mobile_app_jouw_telefoon) - kies er één of meerdere, of typ een naam die nog niet in de lijst staat"
+        }
+      },
+      "panel": {
+        "title": "Paneel",
+        "description": "Met het paneel aan opent het tandwiel op de integratiepagina een volledige pagina in plaats van deze dialoog, en verhuizen alle instellingen daarheen. Uitzetten doe je in het paneel zelf, of met de service transip_dns.set_panel_enabled.",
+        "data": {
+          "panel_enabled": "Paneel gebruiken in plaats van deze dialoog",
+          "panel_sidebar": "Paneel ook in de zijbalk tonen"
+        }
+      }
+    }
+  }
+}

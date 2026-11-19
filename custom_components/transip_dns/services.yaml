@@ -1,0 +1,32 @@
+refresh:
+  name: Refresh
+  description: Check the external IP address now and update the DNS records if needed.
+  fields:
+    entry_id:
+      name: Config entry
+      description: Limit the refresh to one TransIP account. Leave empty for all accounts.
+      required: false
+      selector:
+        config_entry:
+          integration: transip_dns
+
+set_panel_enabled:
+  name: Set panel enabled
+  description: >-
+    Turn the TransIP DNS panel on or off. With the panel off, the gear button
+    on the integration page opens the options dialog again. Use this to get
+    back in if the panel itself fails to load.
+  fields:
+    enabled:
+      name: Enabled
+      description: Whether the panel should be registered.
+      required: true
+      selector:
+        boolean:
+    entry_id:
+      name: Config entry
+      description: Limit the change to one TransIP account. Leave empty for all accounts.
+      required: false
+      selector:
+        config_entry:
+          integration: transip_dns

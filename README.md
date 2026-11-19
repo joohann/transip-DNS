@@ -5,6 +5,7 @@
   <img src="https://img.shields.io/badge/Home%20Assistant-2026.10%2B-blue" alt="Home Assistant 2026.10 or later">
   <img src="https://img.shields.io/badge/HACS-custom%20repository-blue" alt="HACS custom repository">
   <img src="https://img.shields.io/badge/records-A%20%26%20AAAA-green" alt="A and AAAA records">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-lightgrey" alt="MIT license"></a>
 </p>
 
 A Home Assistant custom integration that watches your external IP address and keeps your **TransIP** DNS records pointing at it. It authenticates with a TransIP API key pair, checks your address on a schedule, and updates an `A` or `AAAA` record only when the address has actually changed.

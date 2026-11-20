@@ -66,6 +66,10 @@ Every setting lives in one dialog. Notify services are a combobox with search; t
 
 **Marketplace** (Home Assistant 2026.11 and later, where HACS became part of core)
 
+<a href="https://my.home-assistant.io/redirect/hacs_repository/?owner=joohann&repository=transip-DNS&category=integration"><img src="https://my.home-assistant.io/badges/hacs_repository.svg" alt="Open your Home Assistant instance and add this repository to the Marketplace."></a>
+
+The button above adds the repository to your Marketplace in one step; then install **TransIP Dynamic DNS** and restart Home Assistant. Or do it by hand:
+
 1. Open the **Marketplace** panel, then the menu, then **Custom repositories**
 2. Choose **Add from a GitHub link** and paste `https://github.com/joohann/transip-DNS`, category **Integration**
 3. Install **TransIP Dynamic DNS**, then restart Home Assistant

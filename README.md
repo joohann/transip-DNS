@@ -3,7 +3,7 @@
 <p align="center">
   <a href="../../releases/latest"><img src="https://img.shields.io/github/v/release/joohann/transip-DNS?label=release" alt="Latest release"></a>
   <img src="https://img.shields.io/badge/Home%20Assistant-2026.10%2B-blue" alt="Home Assistant 2026.10 or later">
-  <img src="https://img.shields.io/badge/HACS-custom%20repository-blue" alt="HACS custom repository">
+  <img src="https://img.shields.io/badge/Marketplace-custom%20repository-blue" alt="Marketplace custom repository">
   <img src="https://img.shields.io/badge/records-A%20%26%20AAAA-green" alt="A and AAAA records">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-lightgrey" alt="MIT license"></a>
 </p>
@@ -64,11 +64,14 @@ Every setting lives in one dialog. Notify services are a combobox with search; t
 
 ## Installation
 
-**HACS**
+**Marketplace** (Home Assistant 2026.11 and later, where HACS became part of core)
 
-1. HACS, three dots, **Custom repositories**
-2. Add `https://github.com/joohann/transip-DNS` as an **Integration**
+1. Open the **Marketplace** panel, then the menu, then **Custom repositories**
+2. Choose **Add from a GitHub link** and paste `https://github.com/joohann/transip-DNS`, category **Integration**
 3. Install **TransIP Dynamic DNS**, then restart Home Assistant
+
+On older versions with HACS installed separately, the same three steps live
+under HACS, three dots, **Custom repositories**.
 
 **Manual**
 
